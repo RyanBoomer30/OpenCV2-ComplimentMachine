@@ -1,12 +1,14 @@
 import cv2
 import numpy as np
-import os
+#import os
 import time
-import playsound
-import speech_recognition as sr
-from gtts import gTTS
+#import playsound
+#import speech_recognition as sr
+#from gtts import gTTS
 import time
 import random
+import pyttsx3
+
 
 #Load Yolo
 
@@ -31,13 +33,13 @@ while 1:
     outs = net.forward(outputLayers)
 
     #Speech
-    def speak(text):
-        tts = gTTS(text=text)
-        filename = "voice.mp3"
-        tts.save(filename)
-        playsound.playsound(filename)
-        os.remove(filename)
-        time.sleep(1)
+    # def speak(text):
+    #     tts = gTTS(text=text)
+    #     filename = "voice.mp3"
+    #     tts.save(filename)
+    #     playsound.playsound(filename)
+    #     os.remove(filename)
+    #     time.sleep(1)
 
     #Showing informations on the screen
     class_ids = []
@@ -66,20 +68,27 @@ while 1:
 
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
 
-    compliments = ["Your hair is very nice today", "That is a good pair of shoes u got", "You are killing it today ",
-                   "I like your bag"]
+
     font = cv2.FONT_HERSHEY_PLAIN
     for i in range(len(boxes)):
         if i in indexes:
+            compliments = ["Your hair is very nice today", "That is a good pair of shoes u got",
+                           "You are killing it today ",
+                           "I like your bag"]
+            speak = pyttsx3.init()
+            x = compliments[random.randint(0, len(compliments)-1)]
+            speak.setProperty("rate", 120)
+            speak.say(x)
+            speak.runAndWait()
             x, y, w, h = boxes[i]
             label = classes[class_ids[i]]
             color = colors[i]
             cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
             cv2.putText(img, label, (x,y+30), font, 3, color, 3)
             update = label
-            if update == "person":
-                x = compliments[random.randint(0,len(compliments))]
-                speak(x)
+            # if update == "person":
+            #     x = compliments[random.randint(0,len(compliments))]
+            #     speak(x)
 
 
     #cv2.imshow('img', img)
