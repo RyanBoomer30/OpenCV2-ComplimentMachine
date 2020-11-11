@@ -1,14 +1,9 @@
 import cv2
 import numpy as np
-#import os
 import time
-#import playsound
-#import speech_recognition as sr
-#from gtts import gTTS
 import time
 import random
 import pyttsx3
-
 
 #Load Yolo
 
@@ -31,15 +26,6 @@ while 1:
 
     net.setInput(blob)
     outs = net.forward(outputLayers)
-
-    #Speech
-    # def speak(text):
-    #     tts = gTTS(text=text)
-    #     filename = "voice.mp3"
-    #     tts.save(filename)
-    #     playsound.playsound(filename)
-    #     os.remove(filename)
-    #     time.sleep(1)
 
     #Showing informations on the screen
     class_ids = []
@@ -73,23 +59,27 @@ while 1:
     for i in range(len(boxes)):
         if i in indexes:
             compliments = ["Your hair is very nice today", "That is a good pair of shoes u got",
-                           "You are killing it today ",
-                           "I like your bag"]
+                           "You are killing it today ", "Your positivity is infectious", "You should be so proud of yourself",
+                           "You are amazing",  "I really appreciate everything that you do",
+                           "You inspire me to be a better person", "Your passion always motivates me", "Thanks for being you",
+                           "You set a great example for everyone around you"]
             speak = pyttsx3.init()
-            x = compliments[random.randint(0, len(compliments)-1)]
-            speak.setProperty("rate", 120)
-            speak.say(x)
-            speak.runAndWait()
+            voices = speak.getProperty("voices")
+            speak.setProperty("rate", 150)
+            speak.setProperty("voice", voices[1].id)
             x, y, w, h = boxes[i]
             label = classes[class_ids[i]]
             color = colors[i]
             cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
             cv2.putText(img, label, (x,y+30), font, 3, color, 3)
-            update = label
-            # if update == "person":
-            #     x = compliments[random.randint(0,len(compliments))]
-            #     speak(x)
-
+            time.sleep(3)
+            if label == "person":
+                outputSound = compliments[random.randint(0, len(compliments) - 1)]
+                speak.say(outputSound)
+                speak.runAndWait()
+            if label == "bag":
+                speak.say("I like your bag")
+                speak.runAndWait()
 
     #cv2.imshow('img', img)
 
